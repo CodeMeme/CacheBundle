@@ -56,6 +56,15 @@ class Cache
         }
     }
 
+    public function delete($keyOrObject)
+    {
+        $key        = $this->getKey($keyOrObject);
+        $expireKey  = $this->getExpireKey($key);
+
+        $this->adapter->delete($key);
+        $this->adapter->delete($expireKey);
+    }
+
     public function getKey($keyOrObject)
     {
         if ($keyOrObject instanceof Cacheable) {
