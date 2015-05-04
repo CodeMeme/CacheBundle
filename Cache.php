@@ -4,11 +4,14 @@ namespace CodeMeme\CacheBundle;
 
 class Cache
 {
-
+    private $debug;
+    private $debugKeys;
     private $adapter;
 
-    public function __construct($adapter = null)
+    public function __construct($adapter = null, $debugKeys = array(), $debug = false)
     {
+        $this->debug = $debug;
+        $this->debugKeys = $debugKeys;
         $this->adapter = $adapter;
     }
 
@@ -26,6 +29,14 @@ class Cache
 
     public function get($keyOrObject)
     {
+        //if we're in debug mode and the key is in the debugkeys array return false
+        if ($this->debug) {
+            foreach ($this->debugKeys as $pattern) {
+                $match = preg_match($pattern, $keyOrObject);
+                if ($match) return false;
+            }
+        }
+        
         $key = $this->getKey($keyOrObject);
 
         // Get the expected expiration time
